@@ -87,9 +87,9 @@ def depthFirstSearch(problem: SearchProblem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    # print("Start:", problem.getStartState())
-    # print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    # print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    print("Start:", problem.getStartState())
+    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     from game import Directions
     n = Directions.NORTH
     e = Directions.EAST
@@ -100,49 +100,49 @@ def depthFirstSearch(problem: SearchProblem):
     
     from util import Stack
     fringe = Stack()
+
+    def isOpposite(action1, action2):
+        if (action1 == n and action2 == s) or (action1 == w and action2 == e) \
+            or (action2 == n and action1 == s) or (action2 == w and action1 == e):
+            return True
+        return False
+    # issue of looping
+
+
+    from pacman import GameState
+    def checkNode(state, action, cost):
+        # successor = new location, action taken, cost
+        # keep going left
+        if (problem.isGoalState(state)):
+            if (action is None):
+                return []
+            return [action]
+        # else, keep going left
+        next = problem.getSuccessors(state)
+        print("Current's successors:", next)
+        if (next == []): 
+            # no more possible states from current situation
+            # indicates no success on route
+            return None
+        for successor in next:
+            if (not isOpposite(action, successor[1])):
+                fringe.push(successor)
+                solution = checkNode(successor[0], successor[1], successor[2])
+                if (solution is not None):
+                    return [action].append(solution)
+                fringe.pop()
+
+    # initial nodes
+    successfulActions = checkNode(problem.getStartState(), None, 0) # first move
+    return successfulActions
     
-    # currentActions = []
-    # currentState = problem.getStartState
-    # successors = None
     # cycle:
     # get legal actions at level --> if [], return current list of actions as the solution 
     # get successor for those legal actions
     # branch 
     # keep going on stack through deep left side to get answer
     
-    
 
-    # currentActions = []
-    # while(True):
-    #     if (problem.isGoalState(currentState)):
-    #         return currentActions
-    #     successors = problem.getSuccessors(currentState)
-    #     for x in successors:
-    #         fringe.push(x)
-    #         checkNode(currentState, x[1])
-    
-    # For a given state, this should return a list of triples, (successor, action, stepCost)
-
-    from pacman import GameState
-    def checkNode(state: GameState, currentAction: Directions, actions):
-        # keep going left
-        successor = state.generatePacmanSuccessor(currentAction)
-        if (problem.isGoalState(currentState)):
-            return actions
-        next = problem.getSuccessors(successor)[0]
-        if next is None:
-            return None
-        return checkNode(next[0], next[1], actions + next[1])
-    
-    currentActions = []
-    currentState = problem.getStartState
-    while(True):
-        successors = problem.getSuccessors(currentState)
-        for x in successors:
-            fringe.push(x)
-            status = checkNode(currentState, x[0], currentActions + x[0]) # branch here
-            if status is not None:
-                return status
     #util.raiseNotDefined()
 
 def breadthFirstSearch(problem: SearchProblem):
