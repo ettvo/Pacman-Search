@@ -379,11 +379,11 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    def getManhattanDistance(xy1, xy2):
-        return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+    # def getManhattanDistance(xy1, xy2):
+    #     return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
     
-    def getEuclideanDistance(xy1, xy2):
-        return ((xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
+    # def getEuclideanDistance(xy1, xy2):
+    #     return ((xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
     
     distances = []
     for remaining in set(corners).difference(set(state[1])):
@@ -488,7 +488,36 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    def getManhattanDistance(xy1, xy2):
+        return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+    
+    def getEuclideanDistance(xy1, xy2):
+        return ((xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
+    
+    # distances.append(mazeDistance(state[0], remaining, problem.startingGameState))
+    # successors.append((((nextx, nexty), nextFood), direction, 1))
+    def getFarthestFood(foodGrid):
+        farthestPosition = position
+        farthestDistance = 0
+        x = 0
+        y = 0
+        for column in foodGrid:
+            for row in column:
+                if (foodGrid[x][y]):
+                    distance = getManhattanDistance((x, y), farthestPosition) # fails consistency test
+                    # distance = mazeDistance((x, y), farthestPosition, problem.startingGameState)
+                    if (distance > farthestDistance):
+                        distance = mazeDistance((x, y), farthestPosition, problem.startingGameState)
+                        if (distance > farthestDistance):
+                            farthestPosition = (x, y)
+                            farthestDistance = distance
+                y += 1
+            x += 1
+            y = 0
+        return farthestDistance
+
+    return getFarthestFood(foodGrid)
+    
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
