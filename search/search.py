@@ -137,55 +137,8 @@ def depthFirstSearch(problem: SearchProblem):
     """
     "*** YOUR CODE HERE ***"
     return generalSearch(problem, 0)
-    from util import Stack
-    fringe = Stack()
-    closed_set = set()
-    actions_so_far = list()
-    fringe.push([problem.getStartState(), actions_so_far, None, 0]) # None = direction; need to add cost to
-    while(True): # fringe = state, current path, next action, cost; append next action before adding to fringe
-        if (fringe.isEmpty()):
-            return None # no answer exists
-        curr = fringe.pop()
-        if (problem.isGoalState(curr[0])):
-            return curr[1]
-        if (curr[0] not in closed_set):
-            closed_set.add(curr[0])
-            next = problem.getSuccessors(curr[0]) # successor = tuple (state, action, cost)
-            for successor in next: 
-                if ((successor[0], successor[1]) not in closed_set):
-                    new_path = curr[1].copy()
-                    new_path.append(successor[1])
-                    fringe.push([successor[0], new_path, successor[1], successor[2]])
 
 
-    from util import Stack
-    # fringe = Stack() # tuple (state, actions so far, cost) --> each fringe item = (successor, actions_so_far for path)
-    fringe = Stack()
-    closed_set = set()
-    actions_so_far = list()
-    fringe.push([problem.getStartState(), actions_so_far, None, 0]) # None = direction; need to add cost to
-    while(True): # fringe = state, current path, next action, cost; append next action before adding to fringe
-        if (fringe.isEmpty()):
-            # print("empty fringe")
-            return None # no answer exists
-        curr = fringe.pop()
-        if (problem.isGoalState(curr[0])):
-            # print("got goal")
-            return curr[1]
-        # print("curr: ", curr)
-        #if ((curr[0], curr[2]) not in closed_set):
-        if (curr[0] not in closed_set):
-            closed_set.add(curr[0])
-            next = problem.getSuccessors(curr[0])
-            # print("next: ", next)
-            for successor in next: # (state, action, cost)
-                # while (not leaf_reached):    
-                if ((successor[0], successor[1]) not in closed_set):
-                    new_path = curr[1].copy()
-                    new_path.append(successor[1])
-                    # print("new path: ", new_path)
-                    fringe.push([successor[0], new_path, successor[1], successor[2]])
- 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
