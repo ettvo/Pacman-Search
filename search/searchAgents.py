@@ -382,8 +382,10 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
         return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
     
     distances = []
-    for remaining in corners.difference(state[1]):
+    for remaining in set(corners).difference(set(state[1])):
         distances.append(getManhattanDistance(state[0], remaining))
+    if (len(distances) == 0):
+        return 0
     return min(distances)
 
     return 0 # Default to trivial solution
