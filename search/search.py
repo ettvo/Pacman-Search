@@ -72,21 +72,7 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
-def depthFirstSearch(problem: SearchProblem):
-    """
-    Search the deepest nodes in the search tree first.
-
-    Your search algorithm needs to return a list of actions that reaches the
-    goal. Make sure to implement a graph search algorithm.
-
-    To get started, you might want to try some of these simple commands to
-    understand the search problem that is being passed in:
-
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    """
-    "*** YOUR CODE HERE ***"
+def template(problem):
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
@@ -109,38 +95,21 @@ def depthFirstSearch(problem: SearchProblem):
     # def expand_node(state, action, fringe: Stack, closed_set: set):
     # returns True if goal state
     def expand_nodes(state, action, cost, actions_so_far, fringe, closed_set):
-        # check goal state
         if (problem.isGoalState(state)):
             return True
-            # if (action is None):
-            #     return list()
-            # return list(action) # double-check this
-        # add current node to CLOSED SET (just the node, not the route or anything else)
-        
         if ((state, action) in closed_set):
-            return False # already expanded
-        closed_set.add((state, action)) 
-        
-        # expand current node
-        next = problem.getSuccessors(state) # use func in pacman.py instead
-        # add successors to fringe
-        if (next == []):
             return False
+        closed_set.add((state, action)) 
+        next = problem.getSuccessors(state)
         if (action is not None):
             actions_so_far.append(action)
         for x in next:
-            # if ((x[0], x[1]) not in closed_set):
-            #     fringe.push([x, actions_so_far.copy()])
             fringe.push([x, actions_so_far.copy()])
-            # print("Fringe push: ", actions_so_far + action)
         return False
-
-    # return state
     actions_so_far = list()
     if (expand_nodes(problem.getStartState(), None, 0, actions_so_far, fringe, closed_set)):
         return actions_so_far
-    
-    while(not fringe.isEmpty()): # currently does not do DFS?
+    while(not fringe.isEmpty()):
         successor = fringe.pop()
         status = expand_nodes(successor[0][0], successor[0][1], successor[0][2], successor[1], fringe, closed_set)
         if (status):
@@ -149,6 +118,154 @@ def depthFirstSearch(problem: SearchProblem):
             return successor[1]
     
     return None # error, exist exists but is not detected
+    
+
+    # step 1: expand current node to get successors
+    # step 2: add current node to CLOSED SET (just the node, not the route or anything else)
+    # step 3: add successors to fringe 
+    # step 4: pop first successor in fringe to expand
+    # step 5: expand successor
+    # step 6: add successor to closed set
+    # step 7: repeat
+    
+    # check first node
+    # while fringe is not empty and no solution (check that return is empty list; append to list of actions)
+
+
+def lecture_pseudo_code_graph(problem):
+        # make closed set 
+    # insert node(initial state, fringe) to fringe
+    # loop do
+    from util import Stack
+    # fringe = Stack() # tuple (state, actions so far, cost) --> each fringe item = (successor, actions_so_far for path)
+    fringe = Stack()
+    closed_set = set()
+    actions_so_far = list()
+    fringe.push([problem.getStartState(), actions_so_far, None, 0]) # None = direction; need to add cost too
+    while(True): # fringe = state, current path, next action, cost; append next action before adding to fringe
+        if (fringe.isEmpty()):
+            # print("empty fringe")
+            return None # no answer exists
+        curr = fringe.pop()
+        # print("curr: ", curr)
+        if (problem.isGoalState(curr[0])):
+            # print("got goal")
+            return curr[1]
+        if ((curr[0], curr[2]) not in closed_set):
+            closed_set.add((curr[0], curr[2]))
+            next = problem.getSuccessors(curr[0])
+            # print("next: ", next)
+            for successor in next: # (state, action, cost)
+                if ((successor[0], successor[1]) not in closed_set):
+                    new_path = curr[1].copy()
+                    new_path.append(successor[1])
+                    # print("new path: ", new_path)
+                    fringe.push([successor[0], new_path, successor[1], successor[2]])
+ 
+
+
+def depthFirstSearch(problem: SearchProblem):
+    """
+    Search the deepest nodes in the search tree first.
+
+    Your search algorithm needs to return a list of actions that reaches the
+    goal. Make sure to implement a graph search algorithm.
+
+    To get started, you might want to try some of these simple commands to
+    understand the search problem that is being passed in:
+
+    print("Start:", problem.getStartState())
+    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    """
+    "*** YOUR CODE HERE ***"
+    
+        # make closed set 
+    # insert node(initial state, fringe) to fringe
+    # loop do
+    from util import Stack
+    # fringe = Stack() # tuple (state, actions so far, cost) --> each fringe item = (successor, actions_so_far for path)
+    fringe = Stack()
+    closed_set = set()
+    actions_so_far = list()
+    fringe.push([problem.getStartState(), actions_so_far, None, 0]) # None = direction; need to add cost to
+    leaf_reached = False # of a given branch
+    while(True): # fringe = state, current path, next action, cost; append next action before adding to fringe
+        if (fringe.isEmpty()):
+            # print("empty fringe")
+            return None # no answer exists
+        curr = fringe.pop()
+        if (problem.isGoalState(curr[0])):
+            # print("got goal")
+            return curr[1]
+        # print("curr: ", curr)
+        #if ((curr[0], curr[2]) not in closed_set):
+        if (curr[0] not in closed_set):
+            closed_set.add(curr[0])
+            next = problem.getSuccessors(curr[0])
+            if (next == []):
+                leaf_reached = True
+            # print("next: ", next)
+            for successor in next: # (state, action, cost)
+                # while (not leaf_reached):    
+                if ((successor[0], successor[1]) not in closed_set):
+                    new_path = curr[1].copy()
+                    new_path.append(successor[1])
+                    # print("new path: ", new_path)
+                    fringe.push([successor[0], new_path, successor[1], successor[2]])
+                    leaf_reached = False
+ 
+    # fringe as LIFO stack
+    # return a list of actions (solution) --> need to process the tree within here
+    # 
+
+#######################
+
+    from util import Stack, Queue
+    # fringe = Stack() # tuple (state, actions so far, cost) --> each fringe item = (successor, actions_so_far for path)
+    fringe = Stack()
+    closed_set = set()
+    actions_so_far = list()
+    
+    # def expand_node(state, action, fringe: Stack, closed_set: set):
+    # returns True if goal state
+    def expand_nodes(state, action, cost, actions_so_far, fringe, closed_set):
+        # check goal state
+        if ((state, action) in closed_set):
+            return False # already expanded
+        if (action is not None):
+            closed_set.add((state, action))
+            actions_so_far.append(action)
+        if (problem.isGoalState(state)):
+            return actions_so_far # might have to append action first
+            # if (action is None):
+            #     return list()
+            # return list(action) # double-check this
+        # add current node to CLOSED SET (just the node, not the route or anything else)
+        
+        # expand current node
+        next = problem.getSuccessors(state) # use func in pacman.py instead
+        # add successors to fringe
+        for successor in next:
+            status = expand_nodes(successor[0], successor[1], successor[2], actions_so_far, fringe, closed_set)
+            if (status is not False):
+                return status
+                # keep going on the single branch going left
+            fringe.push([successor, actions_so_far.copy()])
+            # print("Fringe push: ", actions_so_far + action)
+        return False
+
+    # return state
+    status = expand_nodes(problem.getStartState(), None, 0, list(), fringe, closed_set)
+    if (status is not False):
+        return status
+    
+    while(not fringe.isEmpty()): # currently does not do DFS?
+        successor = fringe.pop()
+        if (problem.isGoalState(successor[0][0])):
+            successor[1].append(successor[0][1])
+            return successor[1]
+    return list() # error, exist exists but is not detected
     
 
     # step 1: expand current node to get successors
