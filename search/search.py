@@ -129,8 +129,9 @@ def depthFirstSearch(problem: SearchProblem):
         if (action is not None):
             actions_so_far.append(action)
         for x in next:
-            if ((x[0], x[1]) not in closed_set):
-                fringe.push([x, actions_so_far.copy()])
+            # if ((x[0], x[1]) not in closed_set):
+            #     fringe.push([x, actions_so_far.copy()])
+            fringe.push([x, actions_so_far.copy()])
             # print("Fringe push: ", actions_so_far + action)
         return False
 
