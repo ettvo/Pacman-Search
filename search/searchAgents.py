@@ -545,6 +545,9 @@ class ClosestDotSearchAgent(SearchAgent):
         walls = gameState.getWalls() # grid?
         problem = AnyFoodSearchProblem(gameState)
 
+        def getManhattanDistance(xy1, xy2):
+            return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+            
         "*** YOUR CODE HERE ***"
         def closestFoodHeuristic(state):
             position, foodGrid = state
