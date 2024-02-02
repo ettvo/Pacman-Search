@@ -285,6 +285,7 @@ class CornersProblem(search.SearchProblem):
         self.startingPosition = startingGameState.getPacmanPosition()
         top, right = self.walls.height-2, self.walls.width-2
         self.corners = ((1,1), (1,top), (right, 1), (right, top))
+        self.startingGameState = startingGameState
         # self.touched_corners = set() # changed
         for corner in self.corners:
             if not startingGameState.hasFood(*corner):
@@ -381,12 +382,17 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     def getManhattanDistance(xy1, xy2):
         return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
     
+    def getEuclideanDistance(xy1, xy2):
+        return ((xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
+    
     distances = []
     for remaining in set(corners).difference(set(state[1])):
-        distances.append(getManhattanDistance(state[0], remaining))
+        # distances.append(getManhattanDistance(state[0], remaining)) # better; 5/6, 1533 expanded if min; 1147 if max
+        # distances.append(getEuclideanDistance(state[0], remaining)) # gets: 4/6; 1617 if min; 1313 if max
+        distances.append(mazeDistance(state[0], remaining, problem.startingGameState)) # best so far; gets 5/6 with 1293 expanded
     if (len(distances) == 0):
         return 0
-    return min(distances)
+    return max(distances) # min gets 1293 expanded; going for max gets 801 expanded
 
     return 0 # Default to trivial solution
 
