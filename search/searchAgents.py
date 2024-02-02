@@ -546,13 +546,6 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-
-        def getManhattanDistance(xy1, xy2):
-            return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
-    
-        def getEuclideanDistance(xy1, xy2):
-            return ((xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
-        
         def closestFoodHeuristic(state):
             position, foodGrid = state
             farthestPosition = position
@@ -572,46 +565,7 @@ class ClosestDotSearchAgent(SearchAgent):
                 x += 1
                 y = 0
             return farthestDistance
-
         
-        
-        # def checkFood(action, column, row):
-        #     match action:
-        #         case Directions.NORTH:
-        #             return food[column][row + 1]
-        #         case Directions.SOUTH:
-        #             return food[column][row - 1]
-        #         case Directions.WEST:
-        #             return food[column - 1][row] 
-        #         case Directions.EAST:
-        #             return food[column + 1][row]
-        #         case _:
-        #             return False
-
-        # status = False
-        # path = []
-        # column = startPosition[0]
-        # row = startPosition[1]
-        # from util import Queue # need to go in all directions equally
-        # fringe = Queue()
-
-        # # mazeDistance(point1: Tuple[int, int], point2: Tuple[int, int], gameState: pacman.GameState)
-        # for action in gameState.getLegalActions():
-        #     match action:
-        #         case Directions.NORTH:
-        #             status = food[column][row + 1]
-        #         case Directions.SOUTH:
-        #             status = food[column][row - 1]
-        #         case Directions.WEST:
-        #             status = food[column - 1][row] 
-        #         case Directions.EAST:
-        #             status = food[column + 1][row]
-        #         case _:
-        #             status = False
-        #     if status:
-        #         path.append(action)
-        #         return path
-
         return search.generalSearch(problem, 1, closestFoodHeuristic)
 
 
