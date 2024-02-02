@@ -84,25 +84,45 @@ def generalSearch(problem: SearchProblem, index: int):
             fringe = Stack()
         case 1: # bfs
             fringe = Queue()
+        case 2: # ucs
+            fringe = PriorityQueue() # low priority popped first
         case _:
             return None 
     closed_set = set()
     actions_so_far = list()
-    fringe.push([problem.getStartState(), actions_so_far, None, 0]) # None = direction; need to add cost to
+    if (index < 2):
+        fringe.push([problem.getStartState(), actions_so_far, None]) # fringe = state, current path, next action
+    else:
+        print("a")
+        fringe.push([problem.getStartState(), actions_so_far, None, 0], 0) # fringe = state, current path, next action, total cost of actions; priority represents cumulative cost
+    
     while(True): # fringe = state, current path, next action, cost; append next action before adding to fringe
         if (fringe.isEmpty()):
+            print("b")
             return None # no answer exists
         curr = fringe.pop()
         if (problem.isGoalState(curr[0])):
+            print("c")
             return curr[1]
         if (curr[0] not in closed_set):
             closed_set.add(curr[0])
             next = problem.getSuccessors(curr[0]) # successor = tuple (state, action, cost)
+            print("d")
             for successor in next: 
+                print("next: ", next)
                 if ((successor[0], successor[1]) not in closed_set):
+                    print("f")
                     new_path = curr[1].copy()
                     new_path.append(successor[1])
-                    fringe.push([successor[0], new_path, successor[1], successor[2]])
+                    if (index < 2):
+                        fringe.push([successor[0], new_path, successor[1]])
+                    else:
+                        print("g")
+                        if (successor[2] != 999999):
+                            print("h")
+                            total_cost = successor[2] + curr[3]
+                            fringe.push([successor[0], new_path, successor[1], total_cost], total_cost)
+
 
 
 def depthFirstSearch(problem: SearchProblem):
@@ -185,12 +205,7 @@ def uniformCostSearch(problem: SearchProblem):
     # print("Start:", problem.getStartState())
     # print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     # print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    from game import Directions
-    n = Directions.NORTH
-    e = Directions.EAST
-    s = Directions.SOUTH
-    w = Directions.WEST
-    util.raiseNotDefined()
+    return generalSearch(problem, 2)
 
 def nullHeuristic(state, problem=None):
     """
