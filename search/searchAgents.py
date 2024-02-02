@@ -504,19 +504,19 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
         for column in foodGrid:
             for row in column:
                 if (foodGrid[x][y]):
-                    distance = getManhattanDistance((x, y), farthestPosition) # fails consistency test
-                    # distance = mazeDistance((x, y), farthestPosition, problem.startingGameState)
+                    # distance = getManhattanDistance((x, y), farthestPosition) # fails consistency test
+                    distance = mazeDistance((x, y), farthestPosition, problem.startingGameState)
                     if (distance > farthestDistance):
-                        distance = mazeDistance((x, y), farthestPosition, problem.startingGameState)
-                        if (distance > farthestDistance):
-                            farthestPosition = (x, y)
-                            farthestDistance = distance
+                        # distance = mazeDistance((x, y), farthestPosition, problem.startingGameState)
+                        farthestPosition = (x, y)
+                        farthestDistance = distance
                 y += 1
             x += 1
             y = 0
-        return farthestDistance
+        return (farthestPosition, farthestDistance)
 
-    return getFarthestFood(foodGrid)
+    # return getFarthestFood(foodGrid)[1]
+    return getManhattanDistance(getFarthestFood(foodGrid)[0], position)
     
 
 class ClosestDotSearchAgent(SearchAgent):
