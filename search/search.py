@@ -95,46 +95,105 @@ def depthFirstSearch(problem: SearchProblem):
     e = Directions.EAST
     s = Directions.SOUTH
     w = Directions.WEST
+    stop = Directions.STOP
     # fringe as LIFO stack
     # return a list of actions (solution) --> need to process the tree within here
-    
+    # 
+
     from util import Stack
-    fringe = Stack()
+    fringe = Stack() # tuple (state, actions so far, cost) --> each fringe item = (successor, actions_so_far for path)
+    closed_set = set()
+    actions_so_far = list()
 
-    def isOpposite(action1, action2):
-        if (action1 == n and action2 == s) or (action1 == w and action2 == e) \
-            or (action2 == n and action1 == s) or (action2 == w and action1 == e):
-            return True
-        return False
-    # issue of looping
-
-
-    from pacman import GameState
-    def checkNode(state, action, cost):
-        # successor = new location, action taken, cost
-        # keep going left
+    # def expand_node(state, action, fringe: Stack, closed_set: set):
+    # returns True if goal state
+    def expand_nodes(state, action, cost, actions_so_far, fringe, closed_set):
+        # check goal state
+        if (state in closed_set):
+            return False # already expanded
         if (problem.isGoalState(state)):
-            if (action is None):
-                return []
-            return [action]
-        # else, keep going left
-        next = problem.getSuccessors(state)
-        print("Current's successors:", next)
-        if (next == []): 
-            # no more possible states from current situation
-            # indicates no success on route
-            return None
-        for successor in next:
-            if (not isOpposite(action, successor[1])):
-                fringe.push(successor)
-                solution = checkNode(successor[0], successor[1], successor[2])
-                if (solution is not None):
-                    return [action].append(solution)
-                fringe.pop()
+            return True
+            # if (action is None):
+            #     return list()
+            # return list(action) # double-check this
+        # add current node to CLOSED SET (just the node, not the route or anything else)
+        closed_set.add(state) 
+        # expand current node
+        next = problem.getSuccessors(state) # use func in pacman.py instead
+        # add successors to fringe
+        if (next == []):
+            return False
+        
+        if (action is not None):
+            actions_so_far.append(action)
+        for x in next:
+            fringe.push([x, actions_so_far])
+            # print("Fringe push: ", actions_so_far + action)
 
-    # initial nodes
-    successfulActions = checkNode(problem.getStartState(), None, 0) # first move
-    return successfulActions
+    # return state
+    actions_so_far = list()
+    if (expand_nodes(problem.getStartState(), None, 0, actions_so_far, fringe, closed_set)):
+        return actions_so_far
+    
+    while(not fringe.isEmpty()):
+        successor = fringe.pop()
+        status = expand_nodes(successor[0][0], successor[0][1], successor[0][2], successor[1], fringe, closed_set)
+        if (status):
+            print(successor[1])
+            return successor[1]
+    
+    return None # error, exist exists but is not detected
+    
+
+    # step 1: expand current node to get successors
+    # step 2: add current node to CLOSED SET (just the node, not the route or anything else)
+    # step 3: add successors to fringe 
+    # step 4: pop first successor in fringe to expand
+    # step 5: expand successor
+    # step 6: add successor to closed set
+    # step 7: repeat
+    
+    # check first node
+    # while fringe is not empty and no solution (check that return is empty list; append to list of actions)
+    # 
+
+
+    # prev code here VVVVV
+
+    # def isOpposite(action1, action2):
+    #     if (action1 == n and action2 == s) or (action1 == w and action2 == e) \
+    #         or (action2 == n and action1 == s) or (action2 == w and action1 == e):
+    #         return True
+    #     return False
+    # # issue of looping
+
+
+    # from pacman import GameState
+    # def checkNode(state, action, cost):
+    #     # successor = new location, action taken, cost
+    #     # keep going left
+    #     if (problem.isGoalState(state)):
+    #         if (action is None):
+    #             return []
+    #         return [action]
+    #     # else, keep going left
+    #     next = problem.getSuccessors(state)
+    #     print("Current's successors:", next)
+    #     if (next == []): 
+    #         # no more possible states from current situation
+    #         # indicates no success on route
+    #         return None
+    #     for successor in next:
+    #         if (not isOpposite(action, successor[1])):
+    #             fringe.push(successor)
+    #             solution = checkNode(successor[0], successor[1], successor[2])
+    #             if (solution is not None):
+    #                 return [action].append(solution)
+    #             fringe.pop()
+
+    # # initial nodes
+    # successfulActions = checkNode(problem.getStartState(), None, 0) # first move
+    # return successfulActions
     
     # cycle:
     # get legal actions at level --> if [], return current list of actions as the solution 
